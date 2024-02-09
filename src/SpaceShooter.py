@@ -18,6 +18,8 @@ barvaPozadí = (0,0,0)
 
 pocetNepratel = 3
  
+pocitadloWave = 0
+ 
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky)
 pygame.display.set_caption("Space Shooter")
@@ -47,20 +49,24 @@ class NepritelClass:
     
 Nepratele = []
 
-for i in range(pocetNepratel): 
-    Nepratele.append(
-        NepritelClass(
-            (sirkaObrazovky + random.randint(25,100)), #poziceX - posune je za obrazovku o nahodnou hodnotu
-            random.randint(10,(vyskaObrazovky - 10)), #poziceY
-            random.randint(25,50), # VýškaNepřátel
-            random.randint(25,100), # ŠířkaNepřátel
-            
-            2, #Rychlost Střelby
-            2, #Rychlost Kulky
-            (0,0,255), #barvaNepřítele
-            True
-    ))
-
+def ZacatekWave():
+    global pocitadloWave
+    for i in range(pocetNepratel): 
+        Nepratele.append(
+            NepritelClass(
+                (sirkaObrazovky + random.randint(50,200)), #poziceX - posune je za obrazovku o nahodnou hodnotu
+                random.randint(10,(vyskaObrazovky - vyskaRaketky)), #poziceY
+                random.randint(25,50), # VýškaNepřátel
+                random.randint(25,100), # ŠířkaNepřátel
+                
+                2, #Rychlost Střelby
+                2, #Rychlost Kulky
+                (0,0,255), #barvaNepřítele
+                True
+        ))
+    pocitadloWave += 1
+    print(pocitadloWave)
+ZacatekWave()
 
 
 run = True
@@ -96,8 +102,11 @@ while run:
     
     okno.fill(barvaPozadí)
     
+    
+    
     for NepritelClass in Nepratele:
         NepritelClass.vykresleniNepratel()
+        
         
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
     pygame.display.update() 
