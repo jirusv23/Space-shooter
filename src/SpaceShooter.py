@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, random
 pygame.init()
 
 #variables
@@ -10,6 +10,7 @@ vyskaRaketky = 30
 barvaRaketky= (255,0,0)
 
 poziceRaketkyY = vyskaObrazovky/2 - vyskaRaketky/2
+poziceRaketkyX = 150
 
 rychlostRaketky = 5
 
@@ -17,6 +18,40 @@ barvaPozadí = (0,0,0)
  #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky)
 pygame.display.set_caption("Space Shooter")
+
+#Nepřátelé
+
+class Nepritel:
+    def __init__(self, poziceX, poziceY, vyskaNepratele, sirkaNepratele, rychlostPohybu, rychlostStrelby, rychlostKulky, barvaNepratel):
+        self.poziceX = poziceX
+        self.poziceY = random.randint(0,(vyskaObrazovky-vyskaNepratele))
+        
+        self.vyskaNepratele = vyskaNepratele
+        self.sirkaNepratele = sirkaNepratele
+        
+        self.rychlostPohybu = rychlostPohybu
+        self.rychlostStrelby = rychlostStrelby
+        self.rychlostKulky = rychlostKulky
+        self.barvaNepratel = barvaNepratel
+        
+    def vykresleniNepratel(self):
+        pygame.draw.rect(okno, self.barvaNepratel, (self.poziceX, self.poziceY, self.sirkaNepratele, self.vyskaNepratele))
+
+Nepratele = []
+
+for i in range(3):
+    Nepratele.append(
+        Nepritel(
+            (sirkaObrazovky - 25), #poziceX
+            random.randint(0,vyskaObrazovky), #poziceY
+            random.randint(0,25), # VýškaNepřátel
+            random.randint(0,25), # ŠířkaNepřátel
+            random.uniform(0.5,1.5), #rychlostPohybu
+            2, #Rychlost Střelby
+            2, #Rychlost Kulky
+            (0,0,255) #barvaNepřítele)
+    ))
+
 
 
 run = True
@@ -30,8 +65,6 @@ while run:
             
     stisknuteKlavesy = pygame.key.get_pressed()
     
-    
-    
     if stisknuteKlavesy[pygame.K_ESCAPE] == True: #Escape vypne všechno
         pygame.quit()
         sys.exit()
@@ -43,7 +76,13 @@ while run:
     
     if stisknuteKlavesy[pygame.K_DOWN]: #POHYB DOLŮ
         poziceRaketkyY = poziceRaketkyY + rychlostRaketky
-        
+    
+    
+    
     okno.fill(barvaPozadí)
-    pygame.draw.rect(okno, barvaRaketky, (150, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
+    
+    for Nepritel in Nepratele:
+        Nepritel.vykresleniNepratel()
+    
+    pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
     pygame.display.update() 
