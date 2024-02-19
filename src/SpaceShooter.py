@@ -89,18 +89,11 @@ class Kulky:
     def pohybKulek(self):
         self.poziceX -= self.rychlost
 
-Kulky = dhaga
 
-def PridaniKulky():
-        listKulek.append(
-        dhaga(
-            poziceRaketkyX, #poziceX
-            poziceRaketkyY, #poziceY
-            1, #rychlost
-            True,
-            5
-        )
-        )
+
+def PridaniKulky(list):
+        list.append(Kulky(poziceRaketkyX, poziceRaketkyY, 1, True, 5))
+        return list
 
 
 
@@ -143,13 +136,14 @@ while run:
     for NepritelClass in Nepratele:
         NepritelClass.vykresleniNepratel()
         
-    for Kulky in listKulek:
-        Kulky.vykresleniStrel()
-        Kulky.pohybKulek()
+    for i in listKulek:
+        i.vykresleniStrel()
+        i.pohybKulek()
         
     if stisknuteKlavesy[pygame.K_SPACE]:
         pocetKulek += 1
-        PridaniKulky()
+        listKulek = PridaniKulky(listKulek)
+
     
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
     pygame.display.update() 
