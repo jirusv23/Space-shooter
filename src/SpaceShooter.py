@@ -20,6 +20,8 @@ pocetNepratel = 3
  
 pocitadloWave = 0
  
+pocetKulek = 0
+ 
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky)
 pygame.display.set_caption("Space Shooter")
@@ -69,6 +71,40 @@ def ZacatekWave():
 ZacatekWave()
 
 
+listKulek = []
+
+class Kulky:
+    def __init__(self, poziceX, poziceY, rychlost, naObrazovce, velikost):
+        self.poziceX = poziceX
+        self.poziceY = poziceY
+        self.rychlost = rychlost
+        self.naObrazovce = naObrazovce
+        self.velikost = velikost
+        
+        self.barvaKulky = (255,100,0)
+        
+    def vykresleniStrel(self):
+        pygame.draw.circle(okno, self.barvaKulky,(self.poziceX, self.poziceY), self.velikost)
+
+    def pohybKulek(self):
+        self.poziceX -= self.rychlost
+
+Kulky = dhaga
+
+def PridaniKulky():
+        listKulek.append(
+        dhaga(
+            poziceRaketkyX, #poziceX
+            poziceRaketkyY, #poziceY
+            1, #rychlost
+            True,
+            5
+        )
+        )
+
+
+
+
 run = True
 while run:
     pygame.time.delay(10) #framerate
@@ -100,13 +136,22 @@ while run:
     for NepritelClass in Nepratele:
         NepritelClass.PohybNepratel()
     
+
+    
     okno.fill(barvaPozadí)
-    
-    
-    
+
     for NepritelClass in Nepratele:
         NepritelClass.vykresleniNepratel()
         
+    for Kulky in listKulek:
+        Kulky.vykresleniStrel()
+        Kulky.pohybKulek()
         
+    if stisknuteKlavesy[pygame.K_SPACE]:
+        pocetKulek += 1
+        PridaniKulky()
+    
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
     pygame.display.update() 
+
+print()
