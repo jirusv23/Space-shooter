@@ -23,7 +23,7 @@ pocitadloWave = 0
 pocetKulek = 0
  
 #zaklad
-okno = pygame.display.set_mode(rozliseniObrazovky)
+okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
 pygame.display.set_caption("Space Shooter")
 
 #Nepřátelé
@@ -75,8 +75,8 @@ listKulek = []
 
 class Kulky:
     def __init__(self, poziceX, poziceY, rychlost, naObrazovce, velikost):
-        self.poziceX = poziceX
-        self.poziceY = poziceY
+        self.poziceX = poziceRaketkyX
+        self.poziceY = poziceRaketkyY
         self.rychlost = rychlost
         self.naObrazovce = naObrazovce
         self.velikost = velikost
@@ -84,10 +84,10 @@ class Kulky:
         self.barvaKulky = (255,100,0)
         
     def vykresleniStrel(self):
-        pygame.draw.circle(okno, self.barvaKulky,(self.poziceX, self.poziceY), self.velikost)
+        pygame.draw.circle(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2), self.velikost)
 
     def pohybKulek(self):
-        self.poziceX -= self.rychlost
+        self.poziceX += self.rychlost
 
 
 
