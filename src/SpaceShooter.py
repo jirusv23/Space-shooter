@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, time
 pygame.init()
 
 #variables
@@ -21,7 +21,8 @@ pocetNepratel = 3
 pocitadloWave = 0
  
 pocetKulek = 0
- 
+reloadCheck = 1 #počitá dobu mezi střelami
+
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
 pygame.display.set_caption("Space Shooter")
@@ -29,7 +30,7 @@ pygame.display.set_caption("Space Shooter")
 #Nepřátelé
 
 class NepritelClass:
-    def __init__(self, poziceX, poziceY, vyskaNepratele, sirkaNepratele, rychlostStrelby, rychlostKulky, barvaNepratel, existuje):
+    def __init__(self, poziceX, poziceY, vyskaNepratele, sirkaNepratele, rychlostStrelby, rychlostKulky, barvaNepratel,existuje, reloadSpeed):
         self.poziceX = poziceX
         self.poziceY = random.randint(0,(vyskaObrazovky-vyskaNepratele))
         
@@ -41,6 +42,7 @@ class NepritelClass:
         self.rychlostKulky = rychlostKulky
         self.barvaNepratel = barvaNepratel 
         self.existuje = existuje
+        self.reloadSpeed = reloadSpeed
 
     def vykresleniNepratel(self):
         pygame.draw.rect(okno, self.barvaNepratel, (self.poziceX, self.poziceY, self.sirkaNepratele, self.vyskaNepratele))
@@ -64,7 +66,8 @@ def ZacatekWave():
                 2, #Rychlost Střelby
                 2, #Rychlost Kulky
                 (0,0,255), #barvaNepřítele
-                True
+                True,
+                2 #reload speed
         ))
     pocitadloWave += 1
     print(pocitadloWave)
@@ -81,6 +84,7 @@ class Kulky:
         self.naObrazovce = naObrazovce
         self.velikost = velikost
         
+        
         self.barvaKulky = (255,100,0)
         
     def vykresleniStrel(self):
@@ -96,6 +100,24 @@ def PridaniKulky(list):
         return list
 
 
+
+def Střelba():
+    global reloadCheck, pocetKulek, listKulek
+    if stisknuteKlavesy[pygame.K_SPACE] and reloadCheck == 1: #Sťrelba
+        pocetKulek += 1 #Přidá kulku do listu
+        listKulek = PridaniKulky(listKulek)
+        reloadCheck = 0
+        timer(2000)
+    else:
+        print(reloadCheck)
+        
+def timer(delka):
+    global timeEnd,reloadCheck
+
+    timeEnd = time.time() + (delka/1000)
+    if time.time() < timeEnd:
+        reloadCheck = 1
+       
 
 
 run = True
@@ -122,29 +144,31 @@ while run:
         poziceRaketkyY = poziceRaketkyY + rychlostRaketky
     
     if poziceRaketkyY <= 0: #Ochrana horniho kraje
-        poziceRaketkyY = vyskaObrazovky - vyskaRaketky 
-    elif poziceRaketkyY >= vyskaObrazovky - vyskaRaketky:
+        poziceRaketkyY = vyskaObrazovky - vyskaRaketky #teleport z okrajů
+    elif poziceRaketkyY >= vyskaObrazovky - vyskaRaketky: #ochrana spodního kraje
         poziceRaketkyY = 0
     
-    for NepritelClass in Nepratele:
-        NepritelClass.PohybNepratel()
-    
-
     
     okno.fill(barvaPozadí)
 
-    for NepritelClass in Nepratele:
+    for NepritelClass in Nepratele: #fuknce nepřátel
         NepritelClass.vykresleniNepratel()
-        
-    for i in listKulek:
+        NepritelClass.PohybNepratel()
+
+    for i in listKulek: #Funkčnost kulek
         i.vykresleniStrel()
         i.pohybKulek()
-        
-    if stisknuteKlavesy[pygame.K_SPACE]:
-        pocetKulek += 1
+    '''    
+    if stisknuteKlavesy[pygame.K_SPACE] and reloadCheck == 1: #Sťrelba
+        pocetKulek += 1 #Přidá kulku do listu
         listKulek = PridaniKulky(listKulek)
-
-    
+        reloadCheck = 0
+        print(reloadCheck)
+    else:
+        print(reloadCheck)
+'''
+    Střelba()
+            
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
     pygame.display.update() 
 
