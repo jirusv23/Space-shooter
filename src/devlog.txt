@@ -1,0 +1,12 @@
+Týden 1
+ - Základní okno pygame, přidání ovladatelné lode na ose-y, spawn nepřátel, teleportace hráče na rozích obrazovky
+Týden 2
+ - Hráč může střílet, kulka zmizí po opuštění obrazovky, program se zapne na hlavní obrazovce, čas mezi střelami je nastavitelný, reformátování kódu
+Týden 3
+
+Týden 4
+
+Týden 5
+
+Týden 6
+
