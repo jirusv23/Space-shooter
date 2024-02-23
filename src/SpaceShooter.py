@@ -21,7 +21,7 @@ pocetNepratel = 3
 pocitadloWave = 0
  
 pocetKulek = 0
-reloadCheck = 1 #počitá dobu mezi střelami
+reloadCheck = 1 #kolik mili. sekund do dalsi strely
 
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
@@ -88,48 +88,39 @@ class Kulky:
         self.barvaKulky = (255,100,0)
         
     def vykresleniStrel(self):
-        pygame.draw.circle(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2), self.velikost)
+        if self.naObrazovce:
+            pygame.draw.circle(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2), self.velikost)
 
     def pohybKulek(self):
         self.poziceX += self.rychlost
 
+    def kontrolaKulkyNaObrazovce(self):
+        if self.poziceX > (sirkaObrazovky + self.velikost):
+            self.naObrazovce = False #pokuď přejde obrazovku
 
 
 def PridaniKulky(list):
-        list.append(Kulky(poziceRaketkyX, poziceRaketkyY, 1, True, 5))
+        list.append(Kulky(poziceRaketkyX, #poziceX
+                          poziceRaketkyY, #poziceY
+                          3, #rychlost
+                          True, #naobrazovce
+                          5
+                          )) #velikost
         return list
 
-
-
-def Střelba():
-    global reloadCheck, pocetKulek, listKulek
-    if stisknuteKlavesy[pygame.K_SPACE] and reloadCheck == 1: #Sťrelba
-        pocetKulek += 1 #Přidá kulku do listu
-        listKulek = PridaniKulky(listKulek)
-        reloadCheck = 0
-        timer(2000)
-    else:
-        print(reloadCheck)
-        
-def timer(delka):
-    global timeEnd,reloadCheck
-
-    timeEnd = time.time() + (delka/1000)
-    if time.time() < timeEnd:
-        reloadCheck = 1
-       
-
+clock = pygame.time.Clock()
+framerate = (60)
 
 run = True
 while run:
-    pygame.time.delay(10) #framerate
-
+    pygame.time.delay(10)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
             sys.exit()
             
     stisknuteKlavesy = pygame.key.get_pressed()
+
     
     if stisknuteKlavesy[pygame.K_ESCAPE] == True: #Escape vypne všechno
         pygame.quit()
@@ -148,6 +139,11 @@ while run:
     elif poziceRaketkyY >= vyskaObrazovky - vyskaRaketky: #ochrana spodního kraje
         poziceRaketkyY = 0
     
+    reloadCheck -= 1
+    if stisknuteKlavesy[pygame.K_SPACE] and reloadCheck <= 1:
+        pocetKulek += 1 #Přidá kulku do listu 
+        listKulek = PridaniKulky(listKulek) 
+        reloadCheck = 200
     
     okno.fill(barvaPozadí)
 
@@ -158,18 +154,12 @@ while run:
     for i in listKulek: #Funkčnost kulek
         i.vykresleniStrel()
         i.pohybKulek()
-    '''    
-    if stisknuteKlavesy[pygame.K_SPACE] and reloadCheck == 1: #Sťrelba
-        pocetKulek += 1 #Přidá kulku do listu
-        listKulek = PridaniKulky(listKulek)
-        reloadCheck = 0
-        print(reloadCheck)
-    else:
-        print(reloadCheck)
-'''
-    Střelba()
+
+
+
             
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
     pygame.display.update() 
+    
 
 print()
