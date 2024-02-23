@@ -97,6 +97,10 @@ class Kulky:
     def kontrolaKulkyNaObrazovce(self):
         if self.poziceX > (sirkaObrazovky + self.velikost):
             self.naObrazovce = False #pokuď přejde obrazovku
+            for i, o in enumerate(listKulek):
+                if o.naObrazovce == False:
+                    del listKulek[i]
+                    break
 
 
 def PridaniKulky(list):
@@ -145,6 +149,9 @@ while run:
         listKulek = PridaniKulky(listKulek) 
         reloadCheck = 200
     
+
+    
+    
     okno.fill(barvaPozadí)
 
     for NepritelClass in Nepratele: #fuknce nepřátel
@@ -154,7 +161,7 @@ while run:
     for i in listKulek: #Funkčnost kulek
         i.vykresleniStrel()
         i.pohybKulek()
-
+        i.kontrolaKulkyNaObrazovce()
 
 
             
