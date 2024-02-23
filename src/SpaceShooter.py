@@ -95,12 +95,18 @@ class Kulky:
         self.poziceX += self.rychlost
 
     def kontrolaKulkyNaObrazovce(self):
-        if self.poziceX > (sirkaObrazovky + self.velikost):
-            self.naObrazovce = False #pokuď přejde obrazovku
+        if self.poziceX > (sirkaObrazovky + self.velikost): 
+            self.naObrazovce = False #pokuď přejde obrazovku smaže všechny kulky co jsou False
             for i, o in enumerate(listKulek):
                 if o.naObrazovce == False:
                     del listKulek[i]
                     break
+#NEFUNGUJE
+    def KontrolaKolize(self):
+        for i in range(len(listKulek)):
+            if Nepratele[i].poziceY >= listKulek[i].poziceY >= Nepratele[i].poziceY + Nepratele[i].vyskaNepratele:
+                print("yippee" + str(len(listKulek)))  
+#ADSAFDKJNSA
 
 
 def PridaniKulky(list):
@@ -111,6 +117,8 @@ def PridaniKulky(list):
                           5
                           )) #velikost
         return list
+
+
 
 clock = pygame.time.Clock()
 framerate = (60)
@@ -148,6 +156,7 @@ while run:
         pocetKulek += 1 #Přidá kulku do listu 
         listKulek = PridaniKulky(listKulek) 
         reloadCheck = 200
+       
     
 
     
@@ -162,7 +171,8 @@ while run:
         i.vykresleniStrel()
         i.pohybKulek()
         i.kontrolaKulkyNaObrazovce()
-
+        i.KontrolaKolize()
+    
 
             
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
