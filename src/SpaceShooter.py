@@ -45,7 +45,8 @@ class NepritelClass:
         self.reloadSpeed = reloadSpeed
 
     def vykresleniNepratel(self):
-        pygame.draw.rect(okno, self.barvaNepratel, (self.poziceX, self.poziceY, self.sirkaNepratele, self.vyskaNepratele))
+        if self.existuje == True:
+            pygame.draw.rect(okno, self.barvaNepratel, (self.poziceX, self.poziceY, self.sirkaNepratele, self.vyskaNepratele))
 
     def PohybNepratel(self):
         self.poziceX -= self.rychlostPohybu
@@ -66,7 +67,7 @@ def ZacatekWave():
                 2, #Rychlost Střelby
                 2, #Rychlost Kulky
                 (0,0,255), #barvaNepřítele
-                True,
+                True, #existuje
                 2 #reload speed
         ))
     pocitadloWave += 1
@@ -89,7 +90,7 @@ class Kulky:
         
     def vykresleniStrel(self):
         if self.naObrazovce:
-            pygame.draw.circle(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2), self.velikost)
+            pygame.draw.rect(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2, self.velikost, self.velikost))
 
     def pohybKulek(self):
         self.poziceX += self.rychlost
@@ -103,10 +104,18 @@ class Kulky:
                     break
 #NEFUNGUJE
     def KontrolaKolize(self):
-        for i in range(len(listKulek)):
-            if Nepratele[i].poziceY >= listKulek[i].poziceY >= Nepratele[i].poziceY + Nepratele[i].vyskaNepratele:
-                print("yippee" + str(len(listKulek)))  
-#ADSAFDKJNSA
+        for nep in Nepratele:
+            for kul in listKulek:
+                #nested loop
+
+                if nep.poziceY < kul.poziceY < nep.poziceY + nep.vyskaNepratele:
+                    if nep.poziceX < kul.poziceX < nep.poziceX + nep.sirkaNepratele:
+                        #zkontroluje zda kulka je na neprateli
+                        print(f"hit \npozice kulky X,Y: {round(kul.poziceX)},{round(kul.poziceY)} \npozice nepratele X,Y {round(nep.poziceX)},{round(nep.poziceY)}")
+                        nep.existuje = False
+
+
+            
 
 
 def PridaniKulky(list):
@@ -114,8 +123,8 @@ def PridaniKulky(list):
                           poziceRaketkyY, #poziceY
                           3, #rychlost
                           True, #naobrazovce
-                          5
-                          )) #velikost
+                          7.5 #velikost
+                          )) 
         return list
 
 
