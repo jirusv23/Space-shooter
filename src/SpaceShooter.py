@@ -1,5 +1,6 @@
 import pygame, sys, random, time
 pygame.init()
+pygame.font.init()
 
 #variables
 sirkaObrazovky, vyskaObrazovky = pygame.display.Info().current_w, pygame.display.Info().current_h #získá šířku, výšku obrazovky
@@ -23,9 +24,14 @@ pocitadloWave = 0
 pocetKulek = 0
 reloadCheck = 1 #kolik mili. sekund do dalsi strely
 
+Skore = 0
+
+
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
 pygame.display.set_caption("Space Shooter")
+
+
 
 #Nepřátelé
 
@@ -90,7 +96,7 @@ class Kulky:
         
     def vykresleniStrel(self):
         if self.naObrazovce:
-            pygame.draw.rect(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2, self.velikost, self.velikost))
+            pygame.draw.circle(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2,), self.velikost)
 
     def pohybKulek(self):
         self.poziceX += self.rychlost
@@ -102,21 +108,11 @@ class Kulky:
                 if o.naObrazovce == False:
                     del listKulek[i]
                     break
-#NEFUNGUJE
-    def KontrolaKolize(self):
-        for nep in Nepratele:
-            for kul in listKulek:
-                #nested loop
 
-                if nep.poziceY < kul.poziceY < nep.poziceY + nep.vyskaNepratele:
-                    if nep.poziceX < kul.poziceX < nep.poziceX + nep.sirkaNepratele:
-                        #zkontroluje zda kulka je na neprateli
-                        print(f"hit \npozice kulky X,Y: {round(kul.poziceX)},{round(kul.poziceY)} \npozice nepratele X,Y {round(nep.poziceX)},{round(nep.poziceY)}")
-                        nep.existuje = False
-
-
-            
-
+    def KontrolaKolize(self, rect):
+        circle_rect = pygame.Rect(self.poziceX - self.velikost, self.poziceY - self.velikost, self.velikost * 2, self.velikost * 2)
+        return circle_rect.colliderect(rect)
+        
 
 def PridaniKulky(list):
         list.append(Kulky(poziceRaketkyX, #poziceX
@@ -126,7 +122,6 @@ def PridaniKulky(list):
                           7.5 #velikost
                           )) 
         return list
-
 
 
 clock = pygame.time.Clock()
@@ -142,6 +137,7 @@ while run:
             
     stisknuteKlavesy = pygame.key.get_pressed()
 
+    font = pygame.font.Font(None, 36)
     
     if stisknuteKlavesy[pygame.K_ESCAPE] == True: #Escape vypne všechno
         pygame.quit()
@@ -165,27 +161,35 @@ while run:
         pocetKulek += 1 #Přidá kulku do listu 
         listKulek = PridaniKulky(listKulek) 
         reloadCheck = 200
-       
     
+    for nep in Nepratele: 
+            for kul in listKulek:
+                if kul.KontrolaKolize(pygame.Rect(nep.poziceX, nep.poziceY, nep.sirkaNepratele, nep.vyskaNepratele)): 
+                    Nepratele.remove(nep)
+                    #removes the instance when it overlaps
+                    Skore += 1
 
-    
-    
     okno.fill(barvaPozadí)
 
-    for NepritelClass in Nepratele: #fuknce nepřátel
-        NepritelClass.vykresleniNepratel()
-        NepritelClass.PohybNepratel()
+
+    print(Skore)
+
 
     for i in listKulek: #Funkčnost kulek
         i.vykresleniStrel()
         i.pohybKulek()
         i.kontrolaKulkyNaObrazovce()
-        i.KontrolaKolize()
+        
     
-
+    for NepritelClass in Nepratele: #fuknce nepřátel
+        NepritelClass.vykresleniNepratel()
+        NepritelClass.PohybNepratel()
             
+    score_text = font.render(f'Score: {Skore}', True, (255, 255, 255))
+    okno.blit(score_text, (10, 10))
+
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
-    pygame.display.update() 
+    pygame.display.flip() 
     
 
 print()
