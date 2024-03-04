@@ -31,21 +31,33 @@ Skore = 0
 okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
 pygame.display.set_caption("Space Shooter")
 
-
+listUpgradu = []
+class upgrady:
+    def __init__(self, poziceX, poziceY, rychlostStrelby, zrychleni, velikostStrely, zvetseni, barva):
+        self.poziceX = poziceX
+        self.poziceY = poziceY
+        
+        
+        self.rychlostStrelby = rychlostStrelby
+        self.zrychleni = zrychleni
+        
+        self.velikostStrely = velikostStrely
+        self.zvetseni = zvetseni
+        
+        self.barva = barva
 
 #Nepřátelé
-
+Nepratele = []
 class NepritelClass:
-    def __init__(self, poziceX, poziceY, vyskaNepratele, sirkaNepratele, rychlostStrelby, rychlostKulky, barvaNepratel,existuje, reloadSpeed):
+    def __init__(self, poziceX, poziceY, vyskaNepratele, sirkaNepratele, barvaNepratel,existuje, reloadSpeed):
         self.poziceX = poziceX
-        self.poziceY = random.randint(0,(vyskaObrazovky-vyskaNepratele))
+        self.poziceY = random.randint(50,(vyskaObrazovky-vyskaNepratele-50))
         
         self.vyskaNepratele = vyskaNepratele
         self.sirkaNepratele = sirkaNepratele
         
-        self.rychlostPohybu = sirkaNepratele/vyskaNepratele # větší rychlost čím tenší je
-        self.rychlostStrelby = rychlostStrelby
-        self.rychlostKulky = rychlostKulky
+        self.rychlostPohybu = sirkaNepratele/vyskaNepratele + 2 # větší rychlost čím tenší je
+
         self.barvaNepratel = barvaNepratel 
         self.existuje = existuje
         self.reloadSpeed = reloadSpeed
@@ -56,35 +68,62 @@ class NepritelClass:
 
     def PohybNepratel(self):
         self.poziceX -= self.rychlostPohybu
-    
-    
-Nepratele = []
+        
+    def vypadnutiUpgradu(self):
+        nahodnost = random.randint(1,9)
+        if nahodnost == 1: #upgrade rychlosti strelby
+            listUpgradu.append(
+                upgrady(
+                self.poziceX,
+                self.poziceY,
+                1,#rychlostStrelby
+                1,#zrychleni
+        
+                0,#velikostStrely
+                0,#zvetseni
+                (0, 255, 0)
+            ))
+        elif nahodnost == 2: #upgrade velikosti strelby
+            listUpgradu.append(
+                upgrady(
+                self.poziceX,
+                self.poziceY,
+                
+                0,#rychlostStrelby
+                0,#zrychleni
+        
+                1,#velikostStrely
+                1,#zvetseni
+                (255, 255, 255)
+                ))
 
+    def kontrolaNaObrazovce(self):
+        if self.poziceX < 0 - self.sirkaNepratele - 20:
+            Nepratele.remove(nep)
+            
 def ZacatekWave():
     global pocitadloWave
-    for i in range(pocetNepratel): 
+    for i in range(pocetNepratel):
         Nepratele.append(
             NepritelClass(
                 (sirkaObrazovky + random.randint(50,200)), #poziceX - posune je za obrazovku o nahodnou hodnotu
                 random.randint(10,(vyskaObrazovky - vyskaRaketky)), #poziceY
                 random.randint(25,50), # VýškaNepřátel
                 random.randint(25,100), # ŠířkaNepřátel
-                
-                2, #Rychlost Střelby
-                2, #Rychlost Kulky
                 (0,0,255), #barvaNepřítele
                 True, #existuje
                 2 #reload speed
         ))
-    pocitadloWave += 1
-    print(pocitadloWave)
+            
+        pocitadloWave += 1
+        print(pocitadloWave)
 ZacatekWave()
 
 
 listKulek = []
 
 class Kulky:
-    def __init__(self, poziceX, poziceY, rychlost, naObrazovce, velikost):
+    def __init__(self, rychlost, naObrazovce, velikost):
         self.poziceX = poziceRaketkyX
         self.poziceY = poziceRaketkyY
         self.rychlost = rychlost
@@ -115,9 +154,7 @@ class Kulky:
         
 
 def PridaniKulky(list):
-        list.append(Kulky(poziceRaketkyX, #poziceX
-                          poziceRaketkyY, #poziceY
-                          3, #rychlost
+        list.append(Kulky(3, #rychlost
                           True, #naobrazovce
                           7.5 #velikost
                           )) 
@@ -142,6 +179,9 @@ while run:
     if stisknuteKlavesy[pygame.K_ESCAPE] == True: #Escape vypne všechno
         pygame.quit()
         sys.exit()
+        
+    if stisknuteKlavesy[pygame.K_p]:
+        pass
 
     # POHYB RAKETKY
         
@@ -160,20 +200,20 @@ while run:
     if stisknuteKlavesy[pygame.K_SPACE] and reloadCheck <= 1:
         pocetKulek += 1 #Přidá kulku do listu 
         listKulek = PridaniKulky(listKulek) 
-        reloadCheck = 200
+        reloadCheck = 100
     
-    for nep in Nepratele: 
+    for nep in Nepratele: #ničení nepřátel
             for kul in listKulek:
                 if kul.KontrolaKolize(pygame.Rect(nep.poziceX, nep.poziceY, nep.sirkaNepratele, nep.vyskaNepratele)): 
+                    nep.existuje = False
+                    if nep.existuje == False:
+                        nep.vypadnutiUpgradu()
+
                     Nepratele.remove(nep)
                     #removes the instance when it overlaps
                     Skore += 1
 
     okno.fill(barvaPozadí)
-
-
-    print(Skore)
-
 
     for i in listKulek: #Funkčnost kulek
         i.vykresleniStrel()
@@ -181,9 +221,13 @@ while run:
         i.kontrolaKulkyNaObrazovce()
         
     
-    for NepritelClass in Nepratele: #fuknce nepřátel
-        NepritelClass.vykresleniNepratel()
-        NepritelClass.PohybNepratel()
+    for j in Nepratele: #fuknce nepřátel
+        j.vykresleniNepratel()
+        j.PohybNepratel()
+
+        
+    if len(Nepratele) == 0 and len(listKulek) == 0:
+        ZacatekWave()
             
     score_text = font.render(f'Score: {Skore}', True, (255, 255, 255))
     okno.blit(score_text, (10, 10))
@@ -191,5 +235,3 @@ while run:
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
     pygame.display.flip() 
     
-
-print()
