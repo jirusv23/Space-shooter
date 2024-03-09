@@ -28,10 +28,10 @@ Skore = 0
 countdownWavy = 3000
 obtisnost = 1
 Konec = False
+UpgradMiridla = True
 
-rychlostStrileni = 350
-if rychlostStrileni < 100:
-    rychlostStrileni = 100
+rychlostStrileni = 150
+barvaCary = 8
 
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
@@ -40,7 +40,7 @@ pygame.display.set_caption("Space Shooter")
 listUpgradu = []
 class Upgrady:
     def __init__(self, poziceX, poziceY):
-        self.typ = 1#random.randint(1,3)
+        self.typ = random.randint(1,3)
 
         self.poziceX = poziceX
         self.poziceY = poziceY
@@ -165,14 +165,19 @@ def PridaniKulky(list):
         return list
 
 def kolizeHraceUpgradu():
-    global rychlostStrileni
+    global rychlostStrileni, barvaCary, rychlostRaketky
     for upg in listUpgradu:
         if  poziceRaketkyX <= upg.poziceX <= poziceRaketkyX + sirkaRaketky:
             if poziceRaketkyY - upg.poziceY/2 <= upg.poziceY <= poziceRaketkyY + vyskaRaketky + 15/2:#vyska upgradu
                 if upg.typ == 1:
-                    rychlostStrileni -= 50
-                    #ZDE SE MUSI VYMAZAT UPGRADE
-
+                    rychlostStrileni -= 25
+                    listUpgradu.remove(upg)
+                elif upg.typ == 2:
+                    barvaCary += 8
+                    listUpgradu.remove(upg)
+                elif upg.typ == 3:
+                    rychlostRaketky += 1
+                    listUpgradu.remove(upg)
 
 clock = pygame.time.Clock()
 framerate = (60)
@@ -224,13 +229,20 @@ while run:
                     #removes the instance when it overlaps
                     Skore += 1
                     
-                    if random.randint(1,2) == 1:
+                    if random.randint(1,4) == 1:
                         VypadnutiUpgradu(nep.poziceX, nep.poziceY)
                     
+    if rychlostStrileni < 100:
+        rychlostStrileni = 100
 
     kolizeHraceUpgradu()
 
     okno.fill(barvaPozadí)
+
+    if UpgradMiridla:
+        pygame.draw.line(okno, (barvaCary, barvaCary, barvaCary),
+                         (poziceRaketkyX  + sirkaRaketky/2, poziceRaketkyY + vyskaRaketky/2), 
+                         (poziceRaketkyX  + sirkaRaketky/2 + sirkaObrazovky, poziceRaketkyY + vyskaRaketky/2))
 
     for i in listKulek: #Funkčnost kulek
         i.vykresleniStrel()
@@ -247,6 +259,8 @@ while run:
         l.padaniUpgradu()
         l.VykresleniUpgradu()
         l.kontrolaUpgradulNaObrazovce()
+
+
         
     if len(Nepratele) == 0 and len(listKulek) == 0 and len(listUpgradu) == 0:
         
@@ -263,7 +277,7 @@ while run:
         Konec = True
         
     else:
-        score_text = font.render(f'Score: {Skore}', True, (255, 255, 255))
+        score_text = font.render(f'Score: {Skore} Rychlost Střelby {rychlostStrileni}', True, (255, 255, 255))
         okno.blit(score_text, (10, 10))
 
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
