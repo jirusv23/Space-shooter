@@ -3,10 +3,27 @@ Týden 1
 Týden 2
  - Hráč může střílet, kulka zmizí po opuštění obrazovky, program se zapne na hlavní obrazovce, čas mezi střelami je nastavitelný, reformátování kódu
 Týden 3
+ - Přidání kolizí kulek a nepřátel, přidáno skóre
 
-Týden 4
+Týden 4 (plán, přidání automatického spouštění wavek)
+ - přidání autimatického spuštení wave pokud na obrazovce neni kulka, upgrade ani nepřítel
+ - upgrady vypadávají z nepřátel a po sebrání zvýší staty hráče
+ - zvětšovací optížnost
+Týden 5:
+ Plán: 
+	- Přidat vlastní textury a tutorial. 
+ jak se vám pracuje po technické stránce (Python, Thonny, GitKraken)
+	- Bez problému, menší chyby se daří zpravit jednoduše
+ jak se vám pracuje po organizační stránce (čas, klid na práci, plánování)
+	- Hru stíhám podle plánu a líbí se mi
 
-Týden 5
+ Udělal jsem:
+	Nic (prázdniny)
 
-Týden 6
-
+Týden 6 
+ Plán:
+	Přidat vlastní textury a tutorial.
+ jak se vám pracuje po technické stránce (Python, Thonny, GitKraken)
+	- Bez problému, menší chyby se daří zpravit jednoduše
+ jak se vám pracuje po organizační stránce (čas, klid na práci, plánování)
+	- Jsem mírně pozadu ale hlavní cíle projektu stíhám
