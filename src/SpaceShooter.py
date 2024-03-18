@@ -32,6 +32,13 @@ UpgradMiridla = True
 
 rychlostStrileni = 150
 barvaCary = 8
+count = 0 
+tutorialCompleted = False
+
+bylaStrela = 0
+bylPohybNahoru = 0
+bylPohybDolu = 0
+odpocetTutorialu = 300
 
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
@@ -127,40 +134,38 @@ ZacatekWave(obtisnost)
 listKulek = []
 
 class Kulky:
-    def __init__(self, rychlost, naObrazovce, velikost):
+    def __init__(self, rychlost, naObrazovce, vyskaKulky, sirkaKulky):
         self.poziceX = poziceRaketkyX
         self.poziceY = poziceRaketkyY
         self.rychlost = rychlost
         self.naObrazovce = naObrazovce
-        self.velikost = velikost
         
+        self.sirkaKulky = sirkaKulky
+        self.vyskaKulky = vyskaKulky
         
         self.barvaKulky = (255,100,0)
         
     def vykresleniStrel(self):
         if self.naObrazovce:
-            pygame.draw.rect(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2, self.velikost*5, self.velikost))
+            pygame.draw.rect(okno, self.barvaKulky,(self.poziceX + sirkaRaketky, self.poziceY + vyskaRaketky/2, self.sirkaKulky, self.vyskaKulky))
 
     def pohybKulek(self):
         self.poziceX += self.rychlost
 
 
     def kontrolaKulkyNaObrazovce(self):
-        if self.poziceX > (sirkaObrazovky + self.velikost): 
+        if self.poziceX > (sirkaObrazovky + self.vyskaKulky): 
             self.naObrazovce = False #pokuď přejde obrazovku smaže všechny kulky co jsou False
             for i, o in enumerate(listKulek):
                 if o.naObrazovce == False:
                     del listKulek[i]
                     break
-
-    def KontrolaKolize(self, rect):
-        circle_rect = pygame.Rect(self.poziceX, self.poziceY, self.velikost, self.velikost)
-        return circle_rect.colliderect(rect)
-        
+                
 def PridaniKulky(list):
         list.append(Kulky(10, #rychlost
                           True, #naobrazovce
-                          7.5 #velikost
+                          7.5, #velikost
+                          37.5
                           )) 
         return list
 
@@ -179,8 +184,7 @@ def kolizeHraceUpgradu():
                     rychlostRaketky += 1
                     listUpgradu.remove(upg)
 
-clock = pygame.time.Clock()
-framerate = (60)
+
 
 run = True
 while run:
@@ -205,9 +209,11 @@ while run:
         
     if stisknuteKlavesy[pygame.K_UP]: #POHYB NAHORU
         poziceRaketkyY = poziceRaketkyY - rychlostRaketky
+        bylPohybNahoru = 1
     
     if stisknuteKlavesy[pygame.K_DOWN]: #POHYB DOLŮ
         poziceRaketkyY = poziceRaketkyY + rychlostRaketky
+        bylPohybDolu = 1
     
     if poziceRaketkyY <= 0: #Ochrana horniho kraje
         poziceRaketkyY = vyskaObrazovky - vyskaRaketky #teleport z okrajů
@@ -219,18 +225,27 @@ while run:
         pocetKulek += 1 #Přidá kulku do listu 
         listKulek = PridaniKulky(listKulek) 
         reloadCheck = rychlostStrileni
-    
-    for nep in Nepratele: #ničení nepřátel
-            for kul in listKulek:
-                if kul.KontrolaKolize(pygame.Rect(nep.poziceX + nep.sirkaNepratele, nep.poziceY, nep.sirkaNepratele, nep.vyskaNepratele)): 
+        
+        bylaStrela = 1
+        
+
+       
+    for nep in Nepratele: #odstraneneni
+        for kul in listKulek:
+            
+            nepRect = pygame.Rect(nep.poziceX, nep.poziceY, nep.sirkaNepratele, nep.vyskaNepratele)
+            kulRect = pygame.Rect(kul.poziceX, kul.poziceY, kul.sirkaKulky, kul.vyskaKulky)
+            
+            if pygame.Rect.colliderect(nepRect, kulRect):
+                count += 1
+                nep.existuje = False
+                Nepratele.remove(nep)
+                Skore += 1
+                if random.randint(1,4) == 1:
+                    VypadnutiUpgradu(nep.poziceX, nep.poziceY)
                     
-                    nep.existuje = False
-                    Nepratele.remove(nep)
-                    #removes the instance when it overlaps
-                    Skore += 1
                     
-                    if random.randint(1,4) == 1:
-                        VypadnutiUpgradu(nep.poziceX, nep.poziceY)
+
                     
     if rychlostStrileni < 100:
         rychlostStrileni = 100
@@ -243,6 +258,29 @@ while run:
         pygame.draw.line(okno, (barvaCary, barvaCary, barvaCary),
                          (poziceRaketkyX  + sirkaRaketky/2, poziceRaketkyY + vyskaRaketky/2), 
                          (poziceRaketkyX  + sirkaRaketky/2 + sirkaObrazovky, poziceRaketkyY + vyskaRaketky/2))
+
+
+    if tutorialCompleted == False: 
+        if bylPohybNahoru == 1:
+            pygame.draw.rect(okno, (0, 204, 0), (250,250, 50,50)) #up
+        else:
+            pygame.draw.rect(okno, (191, 191, 191), (250,250, 50,50)) 
+         
+        if bylPohybDolu == 1:
+            pygame.draw.rect(okno, (0, 204, 0), (250,310, 50,50)) #down
+        else:
+            pygame.draw.rect(okno, (191, 191, 191), (250,310, 50,50))
+        
+        if bylaStrela == 1:
+            pygame.draw.rect(okno, (0, 204, 0), (310,280, 50,50)) #space
+        else:
+            pygame.draw.rect(okno, (191, 191, 191), (310,280, 50,50))
+
+    if bylaStrela == 1 and bylPohybDolu == 1 and bylPohybNahoru == 1:
+        if odpocetTutorialu == 0:
+            tutorialCompleted = True
+        else:
+            odpocetTutorialu -= 1
 
     for i in listKulek: #Funkčnost kulek
         i.vykresleniStrel()
@@ -277,7 +315,7 @@ while run:
         Konec = True
         
     else:
-        score_text = font.render(f'Score: {Skore} Rychlost Střelby {rychlostStrileni}', True, (255, 255, 255))
+        score_text = font.render(f'Score: {Skore}     Rychlost Střelby {rychlostStrileni}      dotek:{count}  {odpocetTutorialu}', True, (255, 255, 255))
         okno.blit(score_text, (10, 10))
 
     pygame.draw.rect(okno, barvaRaketky, (poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky))
