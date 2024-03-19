@@ -38,7 +38,7 @@ tutorialCompleted = False
 bylaStrela = 0
 bylPohybNahoru = 0
 bylPohybDolu = 0
-odpocetTutorialu = 300
+odpocetTutorialu = 100
 
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
@@ -46,18 +46,19 @@ pygame.display.set_caption("Space Shooter")
 
 listUpgradu = []
 class Upgrady:
-    def __init__(self, poziceX, poziceY):
+    def __init__(self, poziceX, poziceY, velikost):
         self.typ = random.randint(1,3)
 
         self.poziceX = poziceX
         self.poziceY = poziceY
         self.rychlostPadani = 3
+        self.velikost = velikost
     
     def padaniUpgradu(self):
         self.poziceX -= self.rychlostPadani
         
     def VykresleniUpgradu(self):
-        pygame.draw.circle(okno, (255,255,0), (self.poziceX, self.poziceY), 15)
+        pygame.draw.circle(okno, (255,255,0), (self.poziceX, self.poziceY), self.velikost)
         
     def kontrolaUpgradulNaObrazovce(self):
         if self.poziceX < -100: 
@@ -69,7 +70,8 @@ def VypadnutiUpgradu(poziceZniceniX, poziceZniceniY):
     listUpgradu.append(
         Upgrady(
             poziceZniceniX,
-            poziceZniceniY
+            poziceZniceniY,
+            15
         )
     )
     
@@ -128,7 +130,8 @@ def ZacatekWave(difficulty):
                 
             pocitadloWave += 1
 
-ZacatekWave(obtisnost)
+
+
 
 
 listKulek = []
@@ -173,7 +176,7 @@ def kolizeHraceUpgradu():
     global rychlostStrileni, barvaCary, rychlostRaketky
     for upg in listUpgradu:
         if  poziceRaketkyX <= upg.poziceX <= poziceRaketkyX + sirkaRaketky:
-            if poziceRaketkyY - upg.poziceY/2 <= upg.poziceY <= poziceRaketkyY + vyskaRaketky + 15/2:#vyska upgradu
+            if poziceRaketkyY <= upg.poziceY <= poziceRaketkyY + upg.velikost :
                 if upg.typ == 1:
                     rychlostStrileni -= 25
                     listUpgradu.remove(upg)
@@ -300,7 +303,7 @@ while run:
 
 
         
-    if len(Nepratele) == 0 and len(listKulek) == 0 and len(listUpgradu) == 0:
+    if len(Nepratele) == 0 and len(listKulek) == 0 and len(listUpgradu) == 0 and tutorialCompleted == 1:
         
         obtisnost += 1
         pocetNepratel += 0.3
