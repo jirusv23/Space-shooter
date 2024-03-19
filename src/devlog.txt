@@ -21,6 +21,9 @@ Týden 5:
 	Nic (prázdniny)
 
 Týden 6 
+	- úprava kolizí upgradů a hráče
+	- 
+
  Plán:
 	Přidat vlastní textury a tutorial.
  jak se vám pracuje po technické stránce (Python, Thonny, GitKraken)

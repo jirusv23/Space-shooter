@@ -2,6 +2,8 @@ import pygame, sys, random, time
 pygame.init()
 pygame.font.init()
 
+#images
+
 #variables
 sirkaObrazovky, vyskaObrazovky = pygame.display.Info().current_w, pygame.display.Info().current_h #získá šířku, výšku obrazovky
 rozliseniObrazovky = (sirkaObrazovky,vyskaObrazovky)
@@ -38,13 +40,14 @@ tutorialCompleted = False
 bylaStrela = 0
 bylPohybNahoru = 0
 bylPohybDolu = 0
-odpocetTutorialu = 100
+odpocetTutorialu = 10
 
 #zaklad
 okno = pygame.display.set_mode(rozliseniObrazovky, display=0)
 pygame.display.set_caption("Space Shooter")
 
 listUpgradu = []
+
 class Upgrady:
     def __init__(self, poziceX, poziceY, velikost):
         self.typ = random.randint(1,3)
@@ -65,6 +68,7 @@ class Upgrady:
             for i, o in enumerate(listUpgradu):
                     del listUpgradu[i]
                     break
+
         
 def VypadnutiUpgradu(poziceZniceniX, poziceZniceniY):
     listUpgradu.append(
@@ -88,13 +92,13 @@ class NepritelClass:
         
         self.rychlostPohybu = rychlostPohybu
 
-        self.barvaNepratel = barvaNepratel 
+        self.barvaNepratel = barvaNepratel
         self.existuje = existuje
         self.reloadSpeed = reloadSpeed
 
     def vykresleniNepratel(self):
         if self.existuje == True:
-            pygame.draw.rect(okno, self.barvaNepratel, (self.poziceX, self.poziceY, self.sirkaNepratele, self.vyskaNepratele))
+                pygame.draw.rect(okno, self.barvaNepratel, (self.poziceX, self.poziceY, self.sirkaNepratele, self.vyskaNepratele))
 
     def PohybNepratel(self):
         self.poziceX -= self.rychlostPohybu
@@ -108,8 +112,9 @@ class NepritelClass:
                     del Nepratele[i]
                     Skore -= obtisnost
                     break
-    
+
 def ZacatekWave(difficulty):
+    listBarev = [(121,69,135), (87,212,110), (49,30,176), (255,73,141), (138,26,81), (83,250,170), (175,68,201), (255,73,46), (185,166,61), (196,251,15), (205,71,114), (193,65,232), (239,137,98), (104,18,174), (217,227,188), (196,255,18), (18,96,30), (73,90,222), (119,126,128), (199,58,10), (23,64,40),(118,240,41),(142,209,108)]
     global pocitadloWave
     if Konec == False:
         for i in range(round(pocetNepratel)):
@@ -121,9 +126,9 @@ def ZacatekWave(difficulty):
                     random.randint(25,50), # VýškaNepřátel
                     random.randint(25,100), # ŠířkaNepřátel
                     
-                    1+difficulty/2, #rychlostPohybu
+                    1.3**difficulty, #rychlostPohybu
                         
-                    (0,0,255), #barvaNepřítele
+                    random.choice(listBarev), #barvaNepřítele
                     True, #existuje
                     2 #reload speed
             ))
@@ -285,6 +290,8 @@ while run:
         else:
             odpocetTutorialu -= 1
 
+
+
     for i in listKulek: #Funkčnost kulek
         i.vykresleniStrel()
         i.pohybKulek()
@@ -304,7 +311,6 @@ while run:
 
         
     if len(Nepratele) == 0 and len(listKulek) == 0 and len(listUpgradu) == 0 and tutorialCompleted == 1:
-        
         obtisnost += 1
         pocetNepratel += 0.3
         ZacatekWave(obtisnost)
