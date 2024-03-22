@@ -52,7 +52,7 @@ obtisnost = 1
 Konec = False
 UpgradMiridla = True
 
-rychlostStrileni = 150
+rychlostStrileni = 100
 barvaCary = 8
 count = 0 
 tutorialCompleted = False
@@ -151,7 +151,7 @@ def ZacatekWave(difficulty):
                     random.randint(25,50), # VýškaNepřátel
                     random.randint(25,100), # ŠířkaNepřátel
                     
-                    1.3**difficulty, #rychlostPohybu
+                    1.3**(difficulty/2), #rychlostPohybu
                         
                     random.choice(listBarev), #barvaNepřítele
                     True, #existuje
@@ -190,7 +190,7 @@ class Kulky:
                 
                 
 def PridaniKulky(list):
-        list.append(Kulky(10, #rychlost
+        list.append(Kulky(25, #rychlost
                           True, #naobrazovce
                           7.5, #velikost
                           37.5
@@ -201,8 +201,8 @@ def kolizeHraceUpgradu():
     global rychlostStrileni, barvaCary, rychlostRaketky
     for upg in listUpgradu:
         
-        upgRect = pygame.Rect(upg.poziceX + 15, upg.poziceY + 15, upg.velikost + 30, upg.velikost + 30)
-        raketkaRect = pygame.Rect(poziceRaketkyX, poziceRaketkyY, sirkaRaketky, vyskaRaketky)
+        upgRect = pygame.Rect(upg.poziceX, upg.poziceY + 15, upg.velikost, upg.velikost + 30)
+        raketkaRect = pygame.Rect(poziceRaketkyX, poziceRaketkyY, sirkaRaketky*2, vyskaRaketky)
         
         if pygame.Rect.colliderect(upgRect, raketkaRect):
                 
@@ -236,11 +236,11 @@ while run:
         pass
     
     # POHYB RAKETKY
-    if stisknuteKlavesy[pygame.K_UP]: #POHYB NAHORU
+    if stisknuteKlavesy[pygame.K_UP] or stisknuteKlavesy[pygame.K_w]: #POHYB NAHORU
         poziceRaketkyY = poziceRaketkyY - rychlostRaketky
         bylPohybNahoru = 1
     
-    if stisknuteKlavesy[pygame.K_DOWN]: #POHYB DOLŮ
+    if stisknuteKlavesy[pygame.K_DOWN] or stisknuteKlavesy[pygame.K_s]: #POHYB DOLŮ
         poziceRaketkyY = poziceRaketkyY + rychlostRaketky
         bylPohybDolu = 1
     
