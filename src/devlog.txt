@@ -22,7 +22,9 @@ Týden 5:
 
 Týden 6 
 	- úprava kolizí upgradů a hráče
-	- 
+	- odstranění debugujících nástrojů
+	- úprava křivky obtížnosti
+	- textury upgradů
 
  Plán:
 	Přidat vlastní textury a tutorial.
@@ -30,3 +32,5 @@ Týden 6
 	- Bez problému, menší chyby se daří zpravit jednoduše
  jak se vám pracuje po organizační stránce (čas, klid na práci, plánování)
 	- Jsem mírně pozadu ale hlavní cíle projektu stíhám
+
+UŽ MÁM HOTOVO

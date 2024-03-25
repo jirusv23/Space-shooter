@@ -1,0 +1,1 @@
+Spustit Spaceshooter.py a sputit jako python.
